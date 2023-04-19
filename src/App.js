@@ -2725,23 +2725,49 @@ export default class App extends Component {
         },
       },
     };
+
+    this.removeDuplicates = this.removeDuplicates.bind(this);
   }
 
   componentDidMount() {
+    this.refresh();
+  }
+
+  removeDuplicates(arr) {
+    let uniqueArr = [];
+    for (let i of arr) {
+      if (uniqueArr.indexOf(i) === -1) {
+        uniqueArr.push(i);
+      }
+    }
+    return uniqueArr;
+  }
+
+  refresh() {
     let { flavanoidsData, options1, options2 } = this.state;
-    console.log("My", options1.xAxis.data);
     for (let i = 0; i < my_data.length; i++) {
       options1.xAxis.data.push(my_data[i].Flavanoids);
       options1.series[0].data.push(my_data[i].Ash);
-      options2.xAxis.data.push(my_data[i].Alcohol);
+      flavanoidsData.push(my_data[i].Alcohol);
       options2.series[0].data.push(my_data[i].Magnesium);
       //ashData.push(my_data[i].Ash);
     }
-    this.setState({ flavanoidsData, options1 });
+    this.setState({ flavanoidsData, options1, options2 });
+    this.modifyData();
+  }
+
+  modifyData() {
+    let { flavanoidsData, options2 } = this.state;
+    console.log("Options 2", options2.xAxis.data);
+    let newArr = [];
+    newArr = this.removeDuplicates(flavanoidsData);
+    options2.xAxis.data = newArr;
+    this.setState({ options2 });
   }
 
   render() {
     let { flavanoidsData, options1, options2 } = this.state;
+    console.log("Options 2", options2.xAxis.data);
     return (
       <div>
         <Row>
